@@ -1,0 +1,62 @@
+<header class="page-header">
+  <h1>
+    User
+    <small>
+      <%= link_to(@user.username, user_path(@user)) %>
+    </small>
+  </h1>
+  <%= link_to('New Game', games_path, :method => :post, :class => 'btn btn-success') %>
+</header>
+
+<div class="actions">
+  <%= link_to('Edit', edit_user_path(@user), :class => 'btn btn-default') %>
+  <%= link_to('Delete', user_path(@user), :method => :delete, :class => 'btn btn-danger') %>
+</div>
+
+<h2>User Info</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Key</th><th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Username</td><td><%= @user.username %></td>
+    </tr>
+    <tr>
+      <td>Email</td><td><%= @user.email %></td>
+    </tr>
+  </tbody>
+</table>
+
+
+<h2>Games</h2>
+
+<% if @user.games.present? %>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Date</th><th>Progress</th><th>High Score</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <% @user.games.each do |game| %>
+        <tr>
+          <td><%= link_to(game.created_at, game_path(game)) %></td>
+          <td><%= link_to("#{game.tags.count} / #{Character.count}", game_path(game)) %></td>
+          <td><%= link_to(game.high_score ? game.high_score.points : 0, high_scores_path) %></td>
+        </tr>
+      <% end %>
+
+    </tbody>
+  </table>
+
+<% else %>
+  <p class="text-danger">You should play more Where's Waldo!</p>
+<% end %>
+
+

@@ -1,0 +1,53 @@
+// Place all the styles related to the tags controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+#game {
+  .tag {
+    position: absolute;
+    min-width: 128px;
+    min-height: 128px;
+    border-style: solid;
+    border-color: #86F66C;
+  }
+  #tagger {
+    display: none;
+    border-color: #7CC2F9;
+  }
+  #tagger.locked {
+    border-color: #F6778A;
+  }
+  #tagger .menu {
+    display: none;
+  }
+  .tag p,
+  #tagger .menu {
+    position: absolute;
+    top: 128px;
+    left: -8px;
+    background: #fff;
+    width: 128px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-style: solid;
+  }
+  .tag p,
+  #tagger.locked .menu{
+    display: block;
+    border: inherit;
+  }
+  .tag p,
+  #tagger .menu a {
+    display: block;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    text-decoration: none;
+    text-align: center;
+  }
+  #tagger .menu a:hover {
+    background: #ccc;
+  }
+}
+
+

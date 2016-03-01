@@ -1,4 +1,18 @@
 Rails.application.routes.draw do
+
+  resources :high_scores, :only => [:index]
+  resources :users, :except => [:index]
+  resources :games
+  resources :tags
+  resource :session, :only => [:new, :create, :destroy]
+
+  get 'login', :to => 'sessions#new'
+  get 'logout', :to => 'sessions#destroy'
+  delete 'logout', :to => 'sessions#destroy'
+
+  root :to => 'high_scores#index'
+
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

@@ -1,0 +1,33 @@
+<header class="page-header">
+  <h1>
+    High Scores
+  </h1>
+</header>
+
+
+<% if @high_scores.present? %>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Rank</th><th>Username</th><th>Points</th><th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @high_scores.each_with_index do |high_score, rank| %>
+        <tr>
+          <td><%= rank + 1 %></td>
+          <td><%= high_score.game.user.username %></td>
+          <td><%= high_score.points %></td>
+          <td><%= high_score.created_at %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+<% else %>
+
+  <p class="text-danger">Why for are there no more high scores no more?</p>
+
+<% end %>
+

@@ -1,0 +1,10 @@
+<% unless flash.empty? %>
+
+  <% flash.each do |key, value| %>
+    <div class="main-flash text-center alert alert-<%= flash_css_class(key) %>" style="border-radius: 0;">
+      <%= value %>
+    </div>
+  <% end %>
+
+<% end %>
+
