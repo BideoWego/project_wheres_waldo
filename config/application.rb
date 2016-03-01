@@ -8,6 +8,14 @@ Bundler.require(*Rails.groups)
 
 module ProjectWheresWaldo
   class Application < Rails::Application
+
+
+    # ----------------------------------------
+    # My Config
+    # ----------------------------------------
+    config.generators.javascript_engine = :js
+
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.

@@ -4,6 +4,13 @@ class TagsController < ApplicationController
   before_action :set_tag, :only => [:destroy]
 
 
+  def index
+    respond_to do |format|
+      format.json { render :json => @game.tags.to_json, :status => 200 }
+    end
+  end
+
+
   def create
     @tag = @game.tags.build(tag_params)
     if @tag.save
