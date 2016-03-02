@@ -10,6 +10,7 @@ class GamesController < ApplicationController
     respond_to do |format|
       format.html {}
       format.json { render :json => @game.to_json, :status => 200 }
+      format.js {}
     end
   end
 

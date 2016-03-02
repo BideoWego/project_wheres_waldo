@@ -13,7 +13,11 @@ APP.Tag = (function($) {
     if ($('#game').length) {
       return $.ajax({
         url: '/tags',
-        data: { game_id: $('#game').data('id') },
+        data: {
+          tag: {
+            game_id: $('#game').data('id')
+          }
+        },
         dataType: 'json'
       });
     }

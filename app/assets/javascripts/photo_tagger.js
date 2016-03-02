@@ -9,19 +9,9 @@ var APP = APP || {};
 
 APP.PhotoTagPositionable = (function($) {
 
-
   // ----------------------------------------
-  // Show Hide PhotoTagger on Hover
+  // Constructor
   // ----------------------------------------
-  var _bindShowHideOnHoverTo = function(object) {
-    object.$container.hover(function(e) {
-      object.$element.show();
-    }, function(e) {
-      object.$element.hide();
-    });
-  };
-
-
   var PhotoTagPositionable = function(options) {
     this.x = options['x'] || 0;
     this.y = options['y'] || 0;
@@ -33,12 +23,12 @@ APP.PhotoTagPositionable = (function($) {
     this.$element.css({ "border-width": this.borderWidth + 'px' });
     this.$container.prepend(this.$element);
 
-    _bindShowHideOnHoverTo(this);
+    this.moveTo(this.x, this.y);
   };
 
 
   // ----------------------------------------
-  // Tag Positioning
+  // Move To
   // ----------------------------------------
   PhotoTagPositionable.prototype.moveTo = function(x, y) {
     var offset = this.$container.offset();
@@ -77,20 +67,74 @@ APP.PhotoTagPositionable = (function($) {
 })($);
 
 
+
+
 // ----------------------------------------
 // PhotoTag
 // ----------------------------------------
 
 APP.PhotoTag = (function($, PhotoTagPositionable) {
 
+  // ----------------------------------------
+  // Show Hide PhotoTagger on Hover
+  // ----------------------------------------
+  var _bindShowHideOnHoverTo = function(object) {
+    object.$container.hover(function(e) {
+      object.$element.show();
+    }, function(e) {
+      object.$element.hide();
+    });
+  };
+
+
+  // ----------------------------------------
+  // Add a Delete Link to Photo Tag
+  // ----------------------------------------
+  var _addDeleteLinkTo = function(object, tag) {
+    var $a = $('<a></a>');
+    var params = $.param({
+      tag: {
+        game_id: tag.game_id
+      }
+    });
+    $a.attr('href', '/tags/' + tag.id + '?' + params);
+    $a.attr('class', 'delete-link');
+    $a.attr('data-confirm', 'Are you sure?');
+    $a.attr('data-remote', true);
+    $a.attr('data-method', 'delete');
+    $a.html('&times;');
+    object.$element.append($a);
+  };
+
+  // ----------------------------------------
+  // Add Characer Name to Photo Tag
+  // ----------------------------------------
+  var _addCharacterNameTo = function(object, tag) {
+    object.$element.append($('<p>' + tag.character.name + '</p>'));
+  };
+
+
+  // ----------------------------------------
+  // Constructor
+  // ----------------------------------------
   var PhotoTag = function(options) {
     options['element'] = $('<div class="tag"></div>');
-    
+
+    var tag = options['tag'];
+
+    for (var key in tag) {
+      options[key] = tag[key];
+    }
+
     PhotoTagPositionable.call(this, options);
 
-    for (var key in options['tag']) {
-      this.$element.data(key, options['tag'][key]);
+    for (var key in tag) {
+      this.$element.data(key, tag[key]);
     }
+
+    _bindShowHideOnHoverTo(this);
+    _addCharacterNameTo(this, tag);
+    _addDeleteLinkTo(this, tag);
   };
 
   PhotoTag.prototype = Object.create(PhotoTagPositionable.prototype);
@@ -99,6 +143,9 @@ APP.PhotoTag = (function($, PhotoTagPositionable) {
   return PhotoTag;
 
 })($, APP.PhotoTagPositionable);
+
+
+
 
 
 // ----------------------------------------
@@ -119,24 +166,11 @@ APP.PhotoTagger = (function($, PhotoTag, PhotoTagPositionable) {
 
 
   // ----------------------------------------
-  // Show Hide PhotoTagger on Hover
-  // ----------------------------------------
-  var _bindShowHideOnHoverTo = function(object) {
-    object.$container.hover(function(e) {
-      object.$element.show();
-    }, function(e) {
-      if (!object.$element.hasClass('locked')) {
-        object.$element.hide();
-      }
-    });
-  };
-
-
-  // ----------------------------------------
   // Toggle PhotoTagger Lock on Click
   // ----------------------------------------
   var _bindClickTo = function(object) {
     object.$container.on('click', function(e) {
+      object.$element.toggle();
       object.$element.toggleClass('locked');
       if (object.$element.hasClass('locked')) {
         _addMenuTo(object);
@@ -154,8 +188,19 @@ APP.PhotoTagger = (function($, PhotoTag, PhotoTagPositionable) {
 
     object.menuItems.forEach(function(menuItem, index) {
       var $a = $('<a></a>');
-      $a.attr('href', '#');
-      $a.attr('data-id', index);
+      $a.attr('data-remote', true);
+      $a.attr('data-method', 'post');
+
+      var params = $.param({
+        tag: {
+          game_id: object.$container.data('id'),
+          character_id: menuItem.id,
+          x: object.x,
+          y: object.y
+        }
+      });
+
+      $a.attr('href', '/tags?' + params);
       $a.text(menuItem.name);
       var $li = $('<li></li>');
       $li.append($a);
@@ -163,50 +208,32 @@ APP.PhotoTagger = (function($, PhotoTag, PhotoTagPositionable) {
     });
 
     object.$element.append($ul);
-
-    _setMenuAnchorClickEventsOn(object);
   };
 
 
   // ----------------------------------------
-  // Menu Anchor Click
+  // Constructor
   // ----------------------------------------
-  var _setMenuAnchorClickEventsOn = function(object) {
-    object.$element.find('.menu a').click(function(e) {
-      e.preventDefault();
-
-      var $a = $(e.target);
-      var tag = new PhotoTag({
-        container: object.$container,
-        tag: object.menuItems[~~$a.data('id')]
-      });
-      var $p = $('<p>' + $a.text() + '</p>');
-      tag.$element.append($p);
-      object.menuItems.splice(~~$a.attr('data-id'), 1);
-      console.log(object);
-      tag.moveTo(object.x, object.y);
-      object.$element.removeClass('locked');
-
-      return false;
-    });
-  };
-
-
   var PhotoTagger = function(options) {
     options['element'] = $('<div id="tagger" class="tag"></div>');
 
     PhotoTagPositionable.call(this, options);
 
+    this.$element.hide();
+
     this.menuItems = options['menuItems'];
 
     _bindMouseMoveTo(this);
-    _bindShowHideOnHoverTo(this);
     _bindClickTo(this);
   };
 
   PhotoTagger.prototype = Object.create(PhotoTagPositionable.prototype);
   PhotoTagger.prototype.constructor = PhotoTagger;
 
+
+  // ----------------------------------------
+  // Update
+  // ----------------------------------------
   PhotoTagger.prototype.update = function(e) {
     this.x = e.pageX;
     this.y = e.pageY;

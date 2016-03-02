@@ -7,6 +7,7 @@ class TagsController < ApplicationController
   def index
     respond_to do |format|
       format.json { render :json => @game.tags.to_json, :status => 200 }
+      format.js {}
     end
   end
 
@@ -14,30 +15,54 @@ class TagsController < ApplicationController
   def create
     @tag = @game.tags.build(tag_params)
     if @tag.save
-      flash[:success] = 'Tag created'
+      success = 'Tag created'
+      respond_to do |format|
+        format.html { redirect_to :back, :flash => { :success => success } }
+        format.js do
+          flash.now[:success] = success
+          render :index
+        end
+      end
     else
-      flash[:error] = 'Tag not created: ' +
-        @tag.errors.full_messages.join(', ')
+      error = 'Tag not created: ' + @tag.errors.full_messages.join(', ')
+      respond_to do |format|
+        format.html { redirect_to :back, :flash => { :error =>  error } }
+        format.js do
+          flash.now[:error] = error
+          render :index
+        end
+      end
     end
-    redirect_to :back
   end
 
 
   def destroy
     if @tag.destroy
-      flash[:success] = 'Tag destroyed'
+      success = 'Tag destroyed'
+      respond_to do |format|
+        format.html { redirect_to :back, :flash => { :success => success } }
+        format.js do
+          flash.now[:success] = success
+          render :index
+        end
+      end
     else
-      flash[:error] = 'Tag not destroyed: ' +
-        @tag.errors.full_messages.join(', ')
+      error = 'Tag not destroyed: ' + @tag.errors.full_messages.join(', ')
+      respond_to do |format|
+        format.html { redirect_to :back, :flash => { :error => error } }
+        format.js do
+          flash.now[:error] = error
+          render :index
+        end
+      end
     end
-    redirect_to :back
   end
 
 
 
   private
   def set_game
-    @game = current_user.games.find_by_id(params[:game_id])
+    @game = current_user.games.find_by_id(tag_params[:game_id])
     unless @game
       flash[:error] = 'Cannot modify tags on nonexistent game'
       redirect_to :back
@@ -68,3 +93,4 @@ class TagsController < ApplicationController
     )
   end
 end
+

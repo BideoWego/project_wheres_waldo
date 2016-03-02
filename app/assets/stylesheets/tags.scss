@@ -2,21 +2,27 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+$light: #eee;
+$dark: #111;
+$green: #86F66C;
+$blue: #7CC2F9;
+$red: #F6778A;
+
 #game {
   .tag {
     position: absolute;
     min-width: 128px;
     min-height: 128px;
     border-style: solid;
-    border-color: #86F66C;
+    border-color: $green;
   }
   #tagger {
     display: none;
-    border-color: #7CC2F9;
+    border-color: $blue;
   }
-  #tagger.locked {
-    border-color: #F6778A;
-  }
+  // #tagger.locked {
+  //   border-color: $red;
+  // }
   #tagger .menu {
     display: none;
   }
@@ -25,7 +31,7 @@
     position: absolute;
     top: 128px;
     left: -8px;
-    background: #fff;
+    background: $light;
     width: 128px;
     list-style: none;
     padding: 0;
@@ -46,7 +52,19 @@
     text-align: center;
   }
   #tagger .menu a:hover {
-    background: #ccc;
+    background: darken($light, 10%);
+  }
+  .tag .delete-link {
+    display: block;
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    top: -16px;
+    right: -16px;
+    background: $light;
+    border: 4px solid $red;
+    border-radius: 50%;
+    text-align: center;
   }
 }
 

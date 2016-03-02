@@ -1,0 +1,11 @@
+console.log('BEGIN index.js.erb');
+
+var $flash = $('<%= j(render :partial => "shared/flash") %>');
+$('#flash').html($flash);
+
+
+WheresWaldo.init();
+
+
+console.log('END index.js.erb');
+

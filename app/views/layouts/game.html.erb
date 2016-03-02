@@ -16,7 +16,9 @@
   <body id="<%= controller_name + '-' + action_name %>">
 
     <%= render :partial => 'shared/nav' %>
-    <%= render :partial => 'shared/flash' %>
+    <div id="flash" class="text-center">
+      <%= render :partial => 'shared/flash' %>
+    </div>
 
     <%= yield %>
 

@@ -23,9 +23,10 @@ class Tag < ActiveRecord::Base
 
   private
   def deny_if_game_complete
-    if game.high_score
+    is_game_complete = game.high_score
+    if is_game_complete
       errors.add(:base, 'Cannot modify tag on completed game')
     end
-    false
+    is_game_complete
   end
 end

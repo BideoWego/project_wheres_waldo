@@ -1,0 +1,23 @@
+"use strict";
+
+console.log('BEGIN game.js.erb');
+
+$('#tagger').remove();
+
+var _photoTagger;
+
+Character.all()
+  .done(function(data) {
+    _photoTagger = new PhotoTagger({
+      container: $('#game'),
+      menuItems: data
+    });
+  })
+  .fail(function(xhr, status, error) {
+    console.error(error);
+  });
+
+
+
+console.log('END game.js.erb');
+
