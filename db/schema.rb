@@ -24,10 +24,12 @@ ActiveRecord::Schema.define(version: 20160229214326) do
   create_table "games", force: :cascade do |t|
     t.integer  "user_id",       null: false
     t.integer  "high_score_id"
+    t.datetime "ended_at"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
   end
 
+  add_index "games", ["ended_at"], name: "index_games_on_ended_at"
   add_index "games", ["high_score_id"], name: "index_games_on_high_score_id", unique: true
   add_index "games", ["user_id"], name: "index_games_on_user_id"
 

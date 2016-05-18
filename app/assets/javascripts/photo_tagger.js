@@ -140,6 +140,11 @@ APP.PhotoTag = (function($, PhotoTagPositionable) {
   PhotoTag.prototype = Object.create(PhotoTagPositionable.prototype);
   PhotoTag.prototype.constructor = PhotoTag;
 
+
+  PhotoTag.prototype.removeDeleteLink = function() {
+    this.$element.find('.delete-link').remove();
+  };
+
   return PhotoTag;
 
 })($, APP.PhotoTagPositionable);

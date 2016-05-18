@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
 
   resources :characters, :only => [:index]
-  resources :high_scores, :only => [:index]
+  resources :high_scores, :only => [:index, :create]
   resources :users, :except => [:index]
   resources :games
   resources :tags

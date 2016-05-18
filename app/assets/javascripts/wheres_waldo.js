@@ -10,7 +10,30 @@ APP.WheresWaldo = (function($) {
       _characters = [],
       _tags = [],
       _photoTags = [],
-      _menuItems = [];
+      _menuItems = [],
+      _time,
+      _timerId,
+      _game;
+
+  // ----------------------------------------
+  // Get Game
+  // ----------------------------------------
+  var _getGame = function() {
+    if (!_game) {
+      Game.current()
+        .done(function(game) {
+          _game = game;
+          _getCharacters();
+        })
+        .fail(function(xhr, status, error) {
+          flash('error', 'Game: ' + error);
+          console.error(error);
+        });
+    } else {
+      _getCharacters();
+    }
+  };
+
 
   // ----------------------------------------
   // Get Characters
@@ -38,14 +61,13 @@ APP.WheresWaldo = (function($) {
         _menuItems = [];
         _createMenuItems();
         _createPhotoTags();
-
+        _checkGameStatus();
       })
       .fail(function(xhr, status, error) {
         flash('error', 'Tags: ' + error);
-        console.log(error);
+        console.error(error);
       });
   };
-
 
   // ----------------------------------------
   // Create Tagger Menu Items
@@ -100,6 +122,91 @@ APP.WheresWaldo = (function($) {
 
 
   // ----------------------------------------
+  // Create High Score
+  // ----------------------------------------
+  var _createHighScore = function() {
+    console.log('Creating HighScore...');
+    HighScore.create({ high_score: { game_id: _game.id } })
+      .done(function(response) {
+        _game.high_score = response;
+        _game.high_score_id = response.id;
+        console.log(response);
+        clearInterval(_timerId);
+        _displayWin();
+        _removeDeleteTagLinks();
+      })
+      .fail(function(xhr, status, error) {
+        console.error(error);
+        flash('error', 'HighScore: ' + error);
+      });
+  };
+
+
+  // ----------------------------------------
+  // Check Game Status
+  // ----------------------------------------
+  var _checkGameStatus = function() {
+    if (_isGameOver()) {
+      console.log(_isGameOver());
+      if (!_game.high_score_id) {
+        _createHighScore();
+      } else {
+        _displayWin();
+        _removeDeleteTagLinks();
+      }
+    } else if (!_timerId) {
+      _startTimer(_game.time_remaining);
+    }
+  };
+
+
+  // ----------------------------------------
+  // Disable Delete Tag Links
+  // ----------------------------------------
+  var _removeDeleteTagLinks = function() {
+    for (var i = 0; i < _photoTags.length; i++) {
+      var photoTag = _photoTags[i];
+      photoTag.removeDeleteLink();
+    }
+  };
+
+
+  // ----------------------------------------
+  // Display Win
+  // ----------------------------------------
+  var _displayWin = function() {
+    flash('success', 'You won!');
+    $('#time').text(_game.high_score.points);
+  };
+
+
+  // ----------------------------------------
+  // Is Game Over?
+  // ----------------------------------------
+  var _isGameOver = function() {
+    return (_tags.length === _characters.length);
+  };
+
+
+  // ----------------------------------------
+  // Timer
+  // ----------------------------------------
+  var _startTimer = function(time) {
+    _time = time;
+    console.log(_game);
+    if (!_game.ended_at) {
+      _timerId = setInterval(function() {
+        _time--;
+        _time = _time > 0 ? _time : 0;
+        $('#time').text(_time);
+        if (_time === 0) {
+          flash('error', 'Game Over!');
+        }
+      }, 1000);
+    }
+  };
+
+  // ----------------------------------------
   // Initialize
   // ----------------------------------------
   var WheresWaldo = {};
@@ -107,7 +214,7 @@ APP.WheresWaldo = (function($) {
   WheresWaldo.init = function() {
     $('#tagger').remove();
     $('.tag').remove();
-    _getCharacters();
+    _getGame();
   };
 
 

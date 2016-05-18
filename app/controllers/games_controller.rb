@@ -9,7 +9,15 @@ class GamesController < ApplicationController
   def show
     respond_to do |format|
       format.html {}
-      format.json { render :json => @game.to_json, :status => 200 }
+      format.json do
+        render(
+          :json => @game.to_json(
+            :include => [:high_score],
+            :methods => [:total_possible_points, :time_remaining]
+          ),
+          :status => 200
+        )
+      end
       format.js {}
     end
   end
@@ -21,7 +29,7 @@ class GamesController < ApplicationController
       flash[:success] = 'Game created'
       redirect_to game_path(@game)
     else
-      flash[:error] = 'Game not created'
+      flash[:error] = 'Game not created: ' + @game.errors.full_messages.join(', ')
       redirect_to :back
     end
   end
