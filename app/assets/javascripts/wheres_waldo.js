@@ -18,9 +18,9 @@ APP.WheresWaldo = (function($) {
   // ----------------------------------------
   // Get Game
   // ----------------------------------------
-  var _getGame = function() {
+  var _getGame = function(gameId) {
     if (!_game) {
-      Game.current()
+      Game.find({ id: gameId })
         .done(function(game) {
           _game = game;
           _getCharacters();
@@ -55,7 +55,7 @@ APP.WheresWaldo = (function($) {
   // Get Tags
   // ----------------------------------------
   var _getTags = function() {
-    Tag.all()
+    Tag.all({ game_id: _game.id })
       .done(function(tags) {
         _tags = tags;
         _menuItems = [];
@@ -214,7 +214,8 @@ APP.WheresWaldo = (function($) {
   WheresWaldo.init = function() {
     $('#tagger').remove();
     $('.tag').remove();
-    _getGame();
+    var gameId = $('#game').data('id');
+    _getGame(gameId);
   };
 
 

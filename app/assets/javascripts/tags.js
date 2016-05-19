@@ -9,18 +9,14 @@ APP.Tag = (function($) {
   var Tag = function() {};
 
 
-  Tag.all = function(options) {
-    if ($('#game').length) {
-      return $.ajax({
-        url: '/tags',
-        data: {
-          tag: {
-            game_id: $('#game').data('id')
-          }
-        },
-        dataType: 'json'
-      });
-    }
+  Tag.all = function(params) {
+    return $.ajax({
+      url: '/tags',
+      data: {
+        tag: params
+      },
+      dataType: 'json'
+    });
   };
 
 
