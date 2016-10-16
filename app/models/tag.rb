@@ -1,4 +1,4 @@
-class Tag < ActiveRecord::Base
+class Tag < ApplicationRecord
   belongs_to :character
   belongs_to :game
 

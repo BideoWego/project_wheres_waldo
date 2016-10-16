@@ -1,4 +1,4 @@
-class Game < ActiveRecord::Base
+class Game < ApplicationRecord
   belongs_to :user
   has_one :high_score, :dependent => :nullify
   has_many :tags, :dependent => :destroy

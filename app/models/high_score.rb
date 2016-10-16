@@ -1,4 +1,4 @@
-class HighScore < ActiveRecord::Base
+class HighScore < ApplicationRecord
   TOTAL_POSSIBLE_POINTS = 60 * 60
   
 
